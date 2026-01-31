@@ -226,8 +226,8 @@ describe('Content Tests', () => {
     }
   });
 
-  it('should have project index section', () => {
-    expect(html).toContain('Project Index');
+  it('should have projects section', () => {
+    expect(html).toContain('Projects');
   });
 
   it('should have semantic project list', () => {
