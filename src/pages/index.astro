@@ -1,61 +1,79 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import Footer from '../components/Footer.astro';
 import { getUserProfile, getUserRepos } from '../utils/github';
 
 const profile = await getUserProfile();
 const repos = await getUserRepos();
 
-const projects = [
-  {
-    name: 'windows-folder-remark',
-    title: 'Windows Folder Remark',
-    description: 'A lightweight CLI tool to add remarks/comments to Windows folders via Desktop.ini. No background processes, privacy-first, approximately 12MB portable executable. Perfect for organizing project directories and adding context to folders without modifying folder contents.',
-    url: 'https://github.com/piratf/windows-folder-remark',
-    language: 'Python',
-    stars: 144,
-  },
-];
+// 详细的项目描述用于 SEO
+const projectDescriptions: Record<string, string> = {
+  'windows-folder-remark': 'A lightweight CLI tool to add remarks/comments to Windows folders via Desktop.ini. No background processes, privacy-first, approximately 12MB portable executable. Perfect for organizing project directories and adding context to folders without modifying folder contents.',
+};
 ---
 
 <Layout title="Pan | Open Source Project Index & Technical Blog">
   <main>
     <Hero profile={profile} />
 
-    <!-- Semantic Project Index for SEO -->
-    <section class="container mx-auto px-4 py-8 max-w-4xl" aria-label="Project Index">
-      <h2 class="text-2xl font-bold mb-6">Project Index</h2>
-      <ul class="space-y-6">
-        {projects.map(project => (
-          <li class="border-b border-gray-200 pb-6 last:border-0">
-            <h3 class="text-xl font-semibold mb-2">
-              <a href={project.url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
-                {project.title}
-              </a>
-            </h3>
-            <p class="text-gray-600 leading-relaxed">
-              {project.description}
-            </p>
-            <div class="flex gap-4 mt-2 text-sm text-gray-500">
-              <span class="flex items-center gap-1">
-                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                {project.language}
-              </span>
-              <span>★ {project.stars} stars</span>
-            </div>
+    <!-- Projects Section - Semantic HTML + Visual Cards -->
+    <section class="container mx-auto px-4 py-12 max-w-6xl">
+      <h2 class="text-3xl font-bold mb-8 text-center">Projects</h2>
+
+      <!-- Semantic list for SEO -->
+      <ul class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 list-none" aria-label="Projects">
+        {repos.map(repo => (
+          <li class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition">
+            <article>
+              <h3 class="text-xl font-semibold mb-3">
+                <a
+                  href={repo.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline"
+                >
+                  {repo.name}
+                </a>
+              </h3>
+
+              <p class="text-gray-600 mb-4 line-clamp-2">
+                {projectDescriptions[repo.name] || repo.description || 'A GitHub repository.'}
+              </p>
+
+              <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                {repo.language && (
+                  <span class="flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    {repo.language}
+                  </span>
+                )}
+                {repo.stargazers_count > 0 && (
+                  <span class="flex items-center gap-1">
+                    ★ {repo.stargazers_count}
+                  </span>
+                )}
+                {repo.forks_count > 0 && (
+                  <span class="flex items-center gap-1">
+                    ⑂ {repo.forks_count}
+                  </span>
+                )}
+              </div>
+
+              {repo.homepage && (
+                <a
+                  href={repo.homepage}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-block text-sm text-blue-600 hover:underline"
+                >
+                  Visit website →
+                </a>
+              )}
+            </article>
           </li>
         ))}
       </ul>
-    </section>
-
-    <!-- Visual Project Cards -->
-    <section class="container mx-auto px-4 py-12">
-      <h2 class="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {repos.map(repo => <ProjectCard repo={repo} />)}
-      </div>
     </section>
   </main>
 
@@ -63,11 +81,28 @@ const projects = [
 </Layout>
 
 <style>
-  [aria-label="Project Index"] a {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  [aria-label="Projects"] {
+    padding: 0;
+    margin: 0;
+  }
+
+  [aria-label="Projects"] li {
+    list-style: none;
+  }
+
+  [aria-label="Projects"] a {
     color: #2563eb;
     text-decoration: none;
   }
-  [aria-label="ProjectIndex"] a:hover {
+
+  [aria-label="Projects"] a:hover {
     text-decoration: underline;
   }
 </style>
