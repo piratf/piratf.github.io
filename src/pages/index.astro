@@ -7,14 +7,52 @@ import { getUserProfile, getUserRepos } from '../utils/github';
 
 const profile = await getUserProfile();
 const repos = await getUserRepos();
+
+const projects = [
+  {
+    name: 'windows-folder-remark',
+    title: 'Windows Folder Remark',
+    description: 'A lightweight CLI tool to add remarks/comments to Windows folders via Desktop.ini. No background processes, privacy-first, approximately 12MB portable executable. Perfect for organizing project directories and adding context to folders without modifying folder contents.',
+    url: 'https://github.com/piratf/windows-folder-remark',
+    language: 'Python',
+    stars: 144,
+  },
+];
 ---
 
 <Layout title="Pan | Open Source Project Index & Technical Blog">
   <main>
     <Hero profile={profile} />
 
+    <!-- Semantic Project Index for SEO -->
+    <section class="container mx-auto px-4 py-8 max-w-4xl" aria-label="Project Index">
+      <h2 class="text-2xl font-bold mb-6">Project Index</h2>
+      <ul class="space-y-6">
+        {projects.map(project => (
+          <li class="border-b border-gray-200 pb-6 last:border-0">
+            <h3 class="text-xl font-semibold mb-2">
+              <a href={project.url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                {project.title}
+              </a>
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+              {project.description}
+            </p>
+            <div class="flex gap-4 mt-2 text-sm text-gray-500">
+              <span class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                {project.language}
+              </span>
+              <span>★ {project.stars} stars</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Visual Project Cards -->
     <section class="container mx-auto px-4 py-12">
-      <h2 class="text-3xl font-bold mb-8 text-center">项目</h2>
+      <h2 class="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {repos.map(repo => <ProjectCard repo={repo} />)}
       </div>
@@ -23,3 +61,13 @@ const repos = await getUserRepos();
 
   <Footer />
 </Layout>
+
+<style>
+  [aria-label="Project Index"] a {
+    color: #2563eb;
+    text-decoration: none;
+  }
+  [aria-label="ProjectIndex"] a:hover {
+    text-decoration: underline;
+  }
+</style>
