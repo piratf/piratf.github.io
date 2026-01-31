@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Footer from '../components/Footer.astro';
+import { getUserProfile, getUserRepos } from '../utils/github';
+
+const profile = await getUserProfile();
+const repos = await getUserRepos();
+---
+
+<Layout title={profile.name || 'PiratF'} description={`${profile.bio || profile.login} - 个人主页`}>
+  <main>
+    <Hero profile={profile} />
+
+    <section class="container mx-auto px-4 py-12">
+      <h2 class="text-3xl font-bold mb-8 text-center">项目</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {repos.map(repo => <ProjectCard repo={repo} />)}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

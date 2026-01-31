@@ -1,0 +1,73 @@
+---
+import type { GitHubRepo } from '../utils/github';
+
+interface Props {
+  repo: GitHubRepo;
+}
+
+const { repo } = Astro.props;
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+---
+
+<article class="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition">
+  <div class="flex items-start justify-between mb-3">
+    <h3 class="text-xl font-semibold">
+      <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+        {repo.name}
+      </a>
+    </h3>
+    <div class="flex gap-3 text-sm text-gray-500">
+      {repo.stargazers_count > 0 && (
+        <span class="flex items-center gap-1">
+          ★ {repo.stargazers_count}
+        </span>
+      )}
+      {repo.forks_count > 0 && (
+        <span class="flex items-center gap-1">
+          ⑂ {repo.forks_count}
+        </span>
+      )}
+    </div>
+  </div>
+
+  {repo.description && (
+    <p class="text-gray-600 mb-4 line-clamp-2">{repo.description}</p>
+  )}
+
+  <div class="flex items-center gap-4 text-sm text-gray-500">
+    {repo.language && (
+      <span class="flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+        {repo.language}
+      </span>
+    )}
+    <span>更新于 {formatDate(repo.updated_at)}</span>
+  </div>
+
+  {repo.homepage && (
+    <a
+      href={repo.homepage}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-block mt-3 text-sm text-blue-600 hover:underline"
+    >
+      访问网站 →
+    </a>
+  )}
+</article>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
