@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
   schedule:
     - cron: '0 2 * * *'
@@ -40,17 +42,25 @@ jobs:
         run: npm run prebuild
 
       - name: Run tests
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run test:run
 
       - name: Build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build
 
+      # 只在 push 到 main 时上传 artifact（用于 deploy）
       - name: Upload artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
+  # deploy job 只在 push 到 main 时运行
   deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build-and-test
     runs-on: ubuntu-latest
     environment:

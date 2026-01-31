@@ -1,6 +1,7 @@
 // 构建时数据获取脚本
 const { execSync } = require('child_process');
-const { writeFileSync } = require('fs');
+const { writeFileSync, mkdirSync } = require('fs');
+const { dirname } = require('path');
 
 function getPinnedRepos() {
   try {
@@ -62,7 +63,11 @@ function getUserProfile() {
 const repos = getPinnedRepos();
 const profile = getUserProfile();
 
+// 确保目录存在
+const filePath = 'src/data/github.json';
+mkdirSync(dirname(filePath), { recursive: true });
+
 // 保存为 JSON 文件
-writeFileSync('src/data/github.json', JSON.stringify({ repos, profile }, null, 2));
+writeFileSync(filePath, JSON.stringify({ repos, profile }, null, 2));
 
 console.log('Fetched data:', { repos: repos.length, profile: !!profile });
