@@ -18,12 +18,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build
+
+      - name: Install gh CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch GitHub data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run prebuild
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
   deploy:
     needs: build
@@ -32,5 +55,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+      - id: deployment
+        uses: actions/deploy-pages@v4
