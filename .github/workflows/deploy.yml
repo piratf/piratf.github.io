@@ -4,12 +4,8 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-  # 每天凌晨 2 点 (UTC) 自动运行，获取最新的 pinned projects
   schedule:
     - cron: '0 2 * * *'
-  # 测试阶段：临时添加特性分支触发
-  # push:
-  #   branches: [ feat/astro-homepage ]
 
 permissions:
   contents: read
