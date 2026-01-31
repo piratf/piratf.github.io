@@ -1,0 +1,7 @@
+# Robots.txt for https://piratf.github.io/
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://piratf.github.io/sitemap.xml
