@@ -51,16 +51,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build
 
-      # 只在 push 到 main 时上传 artifact（用于 deploy）
+      # 只在 push 到 main 时或 schedule 运行时上传 artifact（用于 deploy）
       - name: Upload artifact
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
-  # deploy job 只在 push 到 main 时运行
+  # deploy job 在 push 到 main 时或 schedule 运行时执行
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule'
     needs: build-and-test
     runs-on: ubuntu-latest
     environment:
